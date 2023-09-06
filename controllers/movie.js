@@ -15,9 +15,34 @@ const getMovie = (req, res, next) => {
 
 // Создание фильма
 const postMovie = (req, res, next) => {
-  const { _id } = req.user;
+  const {
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailerLink,
+    thumbnail,
+    movieId,
+    nameRU,
+    nameEN,
+  } = req.body;
 
-  Movie.create({ owner: _id, ...req.body })
+  Movie.create({
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailerLink,
+    thumbnail,
+    owner: req.user._id,
+    movieId,
+    nameRU,
+    nameEN,
+  })
     .then((movie) => res.status(201).send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -34,13 +59,14 @@ const postMovie = (req, res, next) => {
 
 // Удаление фильма
 const deleteMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
+  const { movieId } = req.params;
+  Movie.findById(movieId)
     .orFail(() => new ErrorNotFound('Фильм не найден'))
     .then((movie) => {
       if (movie.owner.toString() === req.user._id) {
         movie
           .deleteOne(movie)
-          .then((movies) => res.send(movies))
+          .then(() => res.send(movie))
           .catch(next);
       } else {
         throw new ErrorForbidden('Нельзя удалить чужой фильм');
@@ -50,5 +76,7 @@ const deleteMovie = (req, res, next) => {
 };
 
 module.exports = {
-  getMovie, postMovie, deleteMovie,
+  getMovie,
+  postMovie,
+  deleteMovie,
 };

@@ -33,12 +33,12 @@ const validateMoviePost = celebrate({
   body: Joi.object().keys({
     country: Joi.string().required(),
     director: Joi.string().required(),
-    duration: Joi.string().required(),
+    duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().pattern(regexp).required(),
-    trailerLink: Joi.string().pattern(regexp).required(),
-    thumbnail: Joi.string().pattern(regexp).required(),
+    image: Joi.string().required().pattern(regexp),
+    trailerLink: Joi.string().required().pattern(regexp),
+    thumbnail: Joi.string().required().pattern(regexp),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
@@ -48,7 +48,7 @@ const validateMoviePost = celebrate({
 // Валидация для удаления фильма
 const validateMovieId = celebrate({
   params: Joi.object().keys({
-    movieId: Joi.string().length(24).hex().required(),
+    movieId: Joi.string().hex().length(24).required(),
   }),
 });
 
